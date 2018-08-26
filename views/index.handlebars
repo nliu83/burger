@@ -1,3 +1,5 @@
+<img src="/assets/img/burger.png" class="rounded mx-auto d-block" alt="hamburger" >
+
 <div class = 'container'>
 
 <h1>Eat-Da-Burger!</h1>
@@ -23,7 +25,7 @@
 
         <br>
 
-        <button type = 'submit' class = 'devour-button'>Eat me!</button>
+        <button type = 'submit' id = 'devour-button'>Eat me!</button>
         
         
         </form>
@@ -50,14 +52,55 @@
 
   <div class ='create-burger'>
 
-  <form class="create-update-form" action="/" method="POST">
+  <form class="create-update-form" action="/" method="POST" id = 'burger-form'>
         <div class="form-group">
             <label for="dab">Burger Name:</label>
-            <input type="text" id="dab" name="burger_name">
+            <input type="text" name="burger_name" id = 'burger-input'>
         </div>
-        <button class="btn btn-primary" type="submit">Add Burger</button>
+        <button class="btn btn-primary" type="submit" id = 'add-burger'>Add Burger</button>
     </form>
 
 </div>
 
 </div>
+
+<script>
+        $(function() {
+            $("#add-burger").on("click", function(event) {
+               event.preventDefault();
+                console.log("add burger");
+               var newBurger = {
+                   burger_name: $("#burger-input").val().trim(),
+                   devoured: 0
+               };
+               console.log("newBurger", newBurger)
+               
+               $.ajax("/api/burgers", {
+                   type: "POST",
+                   data: newBurger
+               }).then( 
+                   function(data) {
+                       console.log("new burger on menu");
+                       location.reload(); 
+                   }
+               );
+            });
+            $("#devour-button").on("click", function(event) {
+                event.preventDefault();
+                console.log("devour button");
+                var id = $(this).data("id");
+                console.log("id", id)
+                var newDevoured = { devoured: 1};
+                
+                $.ajax("/api/burgers/" + id, {
+                    type: "PUT",
+                    data: newDevoured
+                }).then(
+                    function(data) {
+                        //console.log("that was a tasty burger");
+                        location.reload();
+                    }
+                );
+            });
+        });
+    </script>
